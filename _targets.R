@@ -1,5 +1,5 @@
 library(targets)
-source("code.R")
+source("1_fetch/src/fetch_functions.R")
 tar_option_set(packages = c("tidyverse", "sbtools", "whisker"))
 
 list(
@@ -17,19 +17,22 @@ list(
   # Create a plot
   tar_target(
     figure_1_png,
-    make_plot(out_filepath = "figure_1.png", data = eval_data), 
+    make_plot(out_filepath = "3_visualize/out/figure_1.png", data = eval_data), 
     format = "file"
   ),
   # Save the processed data
   tar_target(
     model_summary_results_csv,
-    write_csv(eval_data, file = "model_summary_results.csv"), 
+    {
+      write_csv(eval_data, file = "2_process/out/model_summary_results.csv")
+      return("2_process/out/model_summary_results.csv")
+    },
     format = "file"
   ),
   # Save the model diagnostics
   tar_target(
     model_diagnostic_text_txt,
-    generate_model_diagnostics(out_filepath = "model_diagnostic_text.txt", data = eval_data), 
+    generate_model_diagnostics(out_filepath = "2_process/out/model_diagnostic_text.txt", data = eval_data), 
     format = "file"
   )
 )
